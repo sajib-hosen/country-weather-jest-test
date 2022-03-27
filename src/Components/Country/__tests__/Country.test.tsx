@@ -1,8 +1,29 @@
 import React from "react";
-import { render, screen, fireEvent, findByTestId } from "@testing-library/react";
-import '@testing-library/jest-dom/extend-expect'
 import { BrowserRouter } from "react-router-dom";
 import Country from "../Country";
+import { findByText, render, screen, waitFor } from "@testing-library/react";
+import '@testing-library/jest-dom/extend-expect'
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
+
+// setup server for mock api call 
+const server = setupServer(
+    rest.get('https://restcountries.com/v3.1/name/bangladesh', (req, res, ctx)=>{
+        return res(ctx.json({
+            country: 'countryName',
+            capital: 'capital',
+            latlng: 'latlng',
+            population: 1236547889,
+            flags: 'flags',
+        }))
+    })
+);
+
+beforeAll(()=>{ server.listen()});
+afterEach(()=>{ server.resetHandlers()});
+afterAll(()=>{ server.close()});
+
+// according to: https://testing-library.com/docs/react-testing-library/example-intro
 
 const MockCountry = ()=>{
     return(
@@ -13,7 +34,6 @@ const MockCountry = ()=>{
 }
 
 describe('testing Country', ()=>{
-
     // on input value change search btn enable
     it('btn exist in the country page', async ()=>{
         const { getByTestId } = render( <MockCountry />);
@@ -21,18 +41,11 @@ describe('testing Country', ()=>{
         expect(backBtnEl).toBeInTheDocument()
     })
 
-    // it('find the country name', async ()=>{
-    //     render( <MockCountry />);
-    //     const cuntryNameEl: any = await screen.findByTestId('countryName');
-    //     expect(cuntryNameEl).toBeInTheDocument()
-    // })
+    test('Load and display data', async () => {
+        const { findByTestId } = render(<MockCountry/>)
+        const capitalEl = await waitFor(()=>{ findByTestId('capitalEl')})
 
-
-    // https://www.youtube.com/watch?v=dReoPIwDccY
+        expect(capitalEl).toBeInTheDocument()
+    })
 })
-
-
-
-
-
 

@@ -3,17 +3,23 @@ import { countryDataType, weatherDataType } from '../Types/countryData';
 import { Link, useParams } from 'react-router-dom';
 import { Box, Button, Typography } from '@mui/material';
 
+
+
 const Country = ( ) => {
     const [ weatherShow, setWeatherShow ] = useState(false)
     let { countryName } = useParams<string>()
     const [countryData, setCountryData] = useState<countryDataType | null>(null)
     const [curWeather, setCurrWeather ] = useState<weatherDataType| null>(null)
 
+    const countryUrs = `https://restcountries.com/v3.1/name/${countryName}`;
+    const weatherUrl = `http://api.weatherstack.com/current?access_key=b3e1cf02fa83d3e62042d571ec252620&query=${countryName}`;
+
     useEffect(()=>{
        if(countryName){ // getting country data
-            fetch(`https://restcountries.com/v3.1/name/${countryName}`)
+            fetch(countryUrs)
             .then(res => res.json())
             .then(data =>{
+                console.log(data)
                 if(data.status === 404){
                     console.log('data not found')
                     console.log(data)
@@ -34,9 +40,10 @@ const Country = ( ) => {
 
     useEffect(()=>{ // getting weather data on every time country state change
         if(countryData?.capital){
-            fetch(`http://api.weatherstack.com/current?access_key=b3e1cf02fa83d3e62042d571ec252620&query=${countryName}`)
+            fetch(weatherUrl)
             .then(res => res.json())
             .then( weather =>{
+                console.log( weather )
                 const currentWeather = {
                     temperature: weather.current.temperature,
                     weatherIcon: weather.current.weather_icons[0],
@@ -59,7 +66,7 @@ const Country = ( ) => {
                 <Box display='flex' flexDirection='row' >
                     <img height='150px' src={countryData?.flags.png} alt="flag" />
                     <Box sx={{ textAlign: 'left', marginLeft: '10px' }}>
-                        <p>Capital: {countryData?.capital[0]}</p>
+                        <p data-testid='capitalEl' >Capital: {countryData?.capital[0]}</p>
                         <p>Population: { countryData?.population}</p>
                         <p>Latitude: {countryData?.latlng[0]}</p>
                         <p>Longitude: {countryData?.latlng[1]}</p>
