@@ -33,9 +33,9 @@ const MockCountry = ()=>{
     )
 }
 
-describe('testing Country', ()=>{
+describe('testing Country.', ()=>{
     // on input value change search btn enable
-    it('btn exist in the country page', async ()=>{
+    it('btn exist in the country page ', async ()=>{
         const { getByTestId } = render( <MockCountry />);
         const backBtnEl = getByTestId('backHomeBtn');
         expect(backBtnEl).toBeInTheDocument()
