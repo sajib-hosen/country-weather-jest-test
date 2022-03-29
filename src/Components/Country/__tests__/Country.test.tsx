@@ -8,22 +8,31 @@ import { setupServer } from 'msw/node';
 
 // setup server for mock api call 
 const server = setupServer(
+
     rest.get('https://restcountries.com/v3.1/name/bangladesh', (req, res, ctx)=>{
         return res(ctx.json({
-            country: 'countryName',
             capital: 'capital',
             latlng: 'latlng',
             population: 1236547889,
             flags: 'flags',
         }))
+    }),
+
+    rest.get('/bangladesh', ( req, res, ctx)=>{
+        return res(ctx.json({
+            temperature: 32,
+            weatherIcon: 'http://weather.icon',
+            windSpeed: 27, 
+            precip: 14,
+        }))
     })
+
 );
 
 beforeAll(()=>{ server.listen()});
 afterEach(()=>{ server.resetHandlers()});
 afterAll(()=>{ server.close()});
 
-// according to: https://testing-library.com/docs/react-testing-library/example-intro
 
 const MockCountry = ()=>{
     return(
@@ -33,19 +42,27 @@ const MockCountry = ()=>{
     )
 }
 
-describe('testing Country.', ()=>{
-    // on input value change search btn enable
-    it('btn exist in the country page ', async ()=>{
-        const { getByTestId } = render( <MockCountry />);
-        const backBtnEl = getByTestId('backHomeBtn');
+describe('testing Country', ()=>{
+  
+    it('btn exist in the country page', async ()=>{
+        render( <MockCountry />);
+        const backBtnEl = screen.getByTestId('backHomeBtn');
         expect(backBtnEl).toBeInTheDocument()
     })
 
-    test('Load and display data', async () => {
-        const { findByTestId } = render(<MockCountry/>)
-        const capitalEl = await waitFor(()=>{ findByTestId('capitalEl')})
+    test('Load and display country data', async () => {
+        render(<MockCountry/>)
+        await screen.findByTestId('capitalEl')
 
-        expect(capitalEl).toBeInTheDocument()
+        expect(screen.getByTestId('capitalEl')).toBeInTheDocument()
+    })
+
+    test('lead and display weather data', async ()=>{
+        render( <MockCountry/> )
+ 
+        await  screen.findByTestId('tampEl')
+        expect( screen.getByTestId('tampEl')).toBeInTheDocument()
+
     })
 })
 

@@ -43,7 +43,6 @@ const Country = ( ) => {
             fetch(weatherUrl)
             .then(res => res.json())
             .then( weather =>{
-                console.log( weather )
                 const currentWeather = {
                     temperature: weather.current.temperature,
                     weatherIcon: weather.current.weather_icons[0],
@@ -66,7 +65,7 @@ const Country = ( ) => {
                 <Box display='flex' flexDirection='row' >
                     <img height='150px' src={countryData?.flags.png} alt="flag" />
                     <Box sx={{ textAlign: 'left', marginLeft: '10px' }}>
-                        <p data-testid='capitalEl' >Capital: {countryData?.capital[0]}</p>
+                        <p>Capital: <span data-testid='capitalEl' >{countryData?.capital[0]}</span></p>
                         <p>Population: { countryData?.population}</p>
                         <p>Latitude: {countryData?.latlng[0]}</p>
                         <p>Longitude: {countryData?.latlng[1]}</p>
@@ -78,7 +77,7 @@ const Country = ( ) => {
                 <Box display='flex' flexDirection='row' justifyContent='center' justifyItems='center' alignItems='center' >
                     <img width='90px' height='90px' style={{borderRadius:'50%'}} src={curWeather?.weatherIcon} alt="weather icon" />
                     <Box sx={{ textAlign: 'left', marginLeft: '10px' }}>
-                        <p>Temperature: {curWeather?.temperature}</p>
+                        <p>Temperature: <span data-testid='tampEl'>{curWeather?.temperature}</span></p>
                         <p>Wind Speed: {curWeather?.windSpeed}</p>
                         <p>Precip: {curWeather?.precip}</p>
                     </Box>
