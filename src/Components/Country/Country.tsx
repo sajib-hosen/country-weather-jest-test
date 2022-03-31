@@ -86,10 +86,6 @@ const Country = ( ) => {
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 1, m: 1, bgcolor: 'background.paper', borderRadius: 1, height:'100%' }} >
                 <Button onClick={()=>{showWeather(true)}} disabled={false} variant="contained">Capital weather</Button>
             </Box> }
-
-            <Button data-testid='backHomeBtn' variant="outlined" >
-                <Link to='/' >Back Home</Link>
-            </Button>
         </div>
     );
 };
