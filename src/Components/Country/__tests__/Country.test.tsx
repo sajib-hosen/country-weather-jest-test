@@ -1,37 +1,8 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import Country from "../Country";
-import { findByText, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import '@testing-library/jest-dom/extend-expect'
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-
-// setup mock server for mock api call 
-const server = setupServer(
-
-    rest.get('https://restcountries.com/v3.1/name/bangladesh', (req, res, ctx)=>{
-        return res(ctx.json({
-            capital: 'capital',
-            latlng: 'latlng',
-            population: 1236547889,
-            flags: 'flags',
-        }))
-    }),
-
-    rest.get('http://api.weatherstack.com/current?access_key=b3e1cf02fa83d3e62042d571ec252620&query=bangladesh', ( req, res, ctx)=>{
-        return res(ctx.json({
-            temperature: 32,
-            weatherIcon: 'http://weather.icon',
-            windSpeed: 27, 
-            precip: 14,
-        }))
-    })
-
-);
-
-beforeAll(()=>{ server.listen()});
-afterEach(()=>{ server.resetHandlers()});
-afterAll(()=>{ server.close()});
+import { findByText, fireEvent, render, screen } from "@testing-library/react";
+import '@testing-library/jest-dom/extend-expect';
 
 
 const MockCountry = ()=>{
@@ -43,12 +14,31 @@ const MockCountry = ()=>{
 }
 
 describe('testing Country', ()=>{
-  
-    it('btn exist in the country page', async ()=>{
-        render( <MockCountry />);
-        const backBtnEl = screen.getByTestId('backHomeBtn');
-        expect(backBtnEl).toBeInTheDocument()
+
+    // Runs a function before any of the tests in this file run
+    beforeAll(()=>{
+        global.fetch = jest.fn(()=> Promise.resolve({
+            json: ()=>Promise.resolve({
+             temperature: 32,
+             weatherIcon: 'http://weather.icon',
+             windSpeed: 27, 
+             precip: 14,
+            })
+        })) as jest.Mock;
     })
+
+    // Runs after each tests have finished
+    afterEach(() =>{
+        const mockFn = jest.fn();
+        mockFn.mockClear();
+    })
+
+    // Runs after all tests have finished
+    afterAll(()=>{
+        const mockFn = jest.fn();
+        mockFn.mockRestore();
+    })
+
 
     test('Load and display country data', async () => {
         render(<MockCountry/>)
@@ -77,3 +67,8 @@ describe('testing Country', ()=>{
     })
 })
 
+
+    // With the help of >>>
+    // https://www.leighhalliday.com/mock-fetch-jest
+    // https://blog.bitsrc.io/how-to-create-and-test-react-custom-hooks-927fe468c361
+    // https://jestjs.io/docs/mock-function-api
