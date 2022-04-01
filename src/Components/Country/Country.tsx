@@ -36,7 +36,7 @@ const Country = ( ) => {
                 }
             })
        }
-    },[ countryName ])
+    },[ countryName, countryUrs ])
 
     useEffect(()=>{ // getting weather data on every time country state change
         if(countryData?.capital){
@@ -52,7 +52,7 @@ const Country = ( ) => {
                 setCurrWeather(currentWeather)
             })
         }
-    },[ countryData ])
+    },[ countryData, weatherUrl ])
 
     const showWeather = ( shouldShow: boolean )=>{
         setWeatherShow(shouldShow)
